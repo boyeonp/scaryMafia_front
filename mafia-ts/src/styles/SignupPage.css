@@ -1,0 +1,64 @@
+.signup-container{
+    background-image: url("../assets/mainImage.png");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    color:#F1CA59;
+    text-align: center;
+}
+.logo-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.title{
+    font-size: 100px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: #F1CA59; 
+    margin-bottom: 50px; 
+}
+.signup-form{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.input-box{
+    width: 400px;
+    height: 50px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 20px;
+    background-color: rgba(245, 245, 245, 0.14); 
+    border-color: #F1CA59;
+    border-width: 1px;
+}
+.input-title{
+    font-size: 30px;
+    color: #fff;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.submit-btn{
+    background-color: #F1CA59;
+    color: #000;
+    border: none;
+    font-size: 40px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 20px;
+    width: 200px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+    box-shadow: 10px 10px 8px rgba(0, 0, 0, 0.2);
+    justify-content: center;
+}
+.submit-btn:hover{
+    background-color: #d4b34c;
+}

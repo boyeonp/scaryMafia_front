@@ -1,0 +1,46 @@
+.main-container{
+    background-image: url("../assets/mainImage.png");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.main-content{
+    text-align: center;
+    color: #F1CA59;
+}
+.logo-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.title{
+    font-size: 100px;
+    margin-bottom: 50px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.login-btn, 
+.signup-btn{
+    background-color: #F1CA59;
+    color: #000;
+    border: none;
+    font-size: 40px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 20px;
+    width: 300px;;
+    margin: 10px;
+    transition: background-color 0.3s ease;
+    box-shadow: 10px 10px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+.login-btn:hover,
+.signup-btn:hover{
+    background-color: #d4b34c;
+}
