@@ -1,0 +1,27 @@
+.vote-guide-page {
+  background-image: url('../assets/day.png'); /* 배경 이미지 경로 */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vote-guide-textbox {
+  padding: 40px 60px;
+  border-radius: 16px;
+  font-size: 40px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.highlight-red {
+  color: #e53935;
+  font-weight: bold;
+}
+
+.highlight-bold {
+  font-weight: bold;
+}

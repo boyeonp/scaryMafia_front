@@ -1,0 +1,76 @@
+.select-page {
+  background-image: url('../assets/night.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.select-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.select-text {
+  font-size: 60px;
+  color: white;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.select-text span {
+  font-weight: bold;
+  font-size: 60px;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 120px);
+  gap: 16px 24px;
+  margin-bottom: 40px;
+}
+
+.player-btn {
+  width: 120px;
+  height: 44px;
+  background-color: white;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.player-btn:hover {
+  background-color: #f1ca59;
+  transform: translateY(-2px);
+}
+
+.player-btn.selected {
+  background-color: #f1ca59;
+  font-weight: bold;
+}
+
+.confirm-btn {
+  margin-top: 20px;
+  padding: 12px 32px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #f1ca59;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s;
+}
+
+.confirm-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

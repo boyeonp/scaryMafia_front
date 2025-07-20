@@ -1,24 +1,25 @@
 .room-card {
   background-color: rgba(255, 255, 255, 0.15);
-  padding: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 20px;
   border-radius: 12px;
   color: white;
   text-align: left;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)  ;
 }
-
 .room-header {
   font-size: 30px;
-  font-weight: bold;
   margin-bottom: 8px;
   justify-content: space-between ;
   display: flex;
 }
 
 .room-desc {
-  font-size: 14px;
+  font-size: 25px;
   margin-bottom: 10px;
+  color: rgba(245, 245, 245, 0.3);
 }
 
 .room-footer {
@@ -31,8 +32,9 @@
 .join-btn {
   background-color: #FFF8E1;
   width: 120px;
+  height: 50px;
   color: black;
-  font-size: 16px;
+  font-size: 18px;
   border: none;
   border-radius: 15px;
   cursor: pointer;
@@ -40,7 +42,9 @@
 }
 .host{
   font-size: 20px;
+  color: rgba(245, 245, 245, 0.3);
 }
 .participants {
   font-size: 20px;
+  color: #000;
 }

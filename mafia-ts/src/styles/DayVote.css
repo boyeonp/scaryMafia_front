@@ -1,0 +1,69 @@
+.vote-page {
+  background-image: url('../assets/day.png'); /* 마을 배경 */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.vote-container {
+  text-align: center;
+}
+
+.vote-title {
+  font-size: 70px;
+  margin-bottom: 70px;
+}
+
+.vote-subtitle {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.button-grid {
+  display: grid;
+  max-width: 400px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;  
+  margin: 0 auto 30px auto;
+}
+
+.player-btn {
+  background-color: #fff8ec;
+  padding: 12px 0;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 180px;
+  height: 50px;
+}
+
+.player-btn:hover {
+  background-color: #f1ca59;
+}
+
+.player-btn.selected {
+  background-color: #f1ca59;
+}
+
+.confirm-btn {
+  background-color: #f1ca59;
+  color: black;
+  padding: 12px 28px;
+  font-size: 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  width: 200px;
+  height: 50px;
+  transition: background-color 0.2s;
+}
+
+.confirm-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

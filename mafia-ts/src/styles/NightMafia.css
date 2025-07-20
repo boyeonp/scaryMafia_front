@@ -1,0 +1,125 @@
+.night-page {
+  background-image: url('../assets/night.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-text {
+  font-size: 70px;
+  color: white;
+  margin-top: 40px;
+}
+
+.timer-box {
+  position: absolute;
+  top: 30px;
+  right: 50px;
+  background-color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  z-index: 10;
+}
+
+.timer-box span {
+  font-size: 18px;
+}
+
+.chat-overlay {
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 90%;
+  max-width: 800px;
+  height: 60%;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.chat-message {
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message.theirs {
+  align-items: flex-start;
+}
+
+.chat-message.mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.sender-name {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.message-bubble {
+  background-color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  white-space: pre-line;
+}
+
+.chat-message.mine .message-bubble {
+  background-color: #ffe08a;
+}
+
+.chat-input-box {
+  display: flex;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  align-items: center;
+}
+
+.chat-input-box input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.send-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 10px 16px;
+}
+
+.vote-btn {
+  margin-top: 40px;
+  padding: 12px 32px;
+  width: 200px;
+  height: 50px;
+  font-size: 18px;
+  background-color: #F1CA59;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}

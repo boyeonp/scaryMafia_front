@@ -1,0 +1,72 @@
+.confirm-vote-page {
+  background-image: url('../assets/day.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.confirm-vote-title {
+  font-size: 50px;
+  margin-bottom: 150px;
+  color: #000;
+  margin-top: 200px;
+}
+
+
+.highlight {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.icon-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 200px;
+  margin-bottom: 50px;
+}
+
+.icon-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.icon-circle svg {
+  font-size: 100px;
+  color: #000;
+}
+
+.icon-circle.selected {
+  background-color: #f1ca59;
+  box-shadow: 0 0 0 4px #f1ca59 inset;
+}
+
+.vote-finish-btn {
+  background-color: #f1ca59;
+  color: black;
+  font-weight: bold;
+  padding: 12px 32px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.vote-finish-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

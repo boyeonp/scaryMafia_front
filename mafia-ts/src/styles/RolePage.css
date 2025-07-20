@@ -1,0 +1,33 @@
+.role-page {
+  background-image: url('../assets/mainImage.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.role-text-wrapper {
+  text-align: center;
+  color: white;
+  line-height: 1.5;
+}
+
+.role-line {
+  font-size: 80px;
+  font-weight: 600;
+  margin: 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.role-role {
+  font-size: 120px; /* ✅ 더 큼 */
+  font-weight: 900;
+  margin: 10px 0;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+.role-title{
+    font-size: 70px;
+    color: #F1CA59;
+    margin-bottom: 100px;
+}

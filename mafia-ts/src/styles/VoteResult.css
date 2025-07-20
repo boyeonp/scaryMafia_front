@@ -1,0 +1,41 @@
+.result-page {
+  background-image: url('../assets/day.png'); /* 밝은 배경 */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-title {
+  font-size: 70px;
+  margin-bottom: 100px;
+  color: black;
+  letter-spacing: -1px;
+}
+
+.result-box {
+  background-color: #FFF8E1;
+  padding: 40px 50px;
+  width: 800px;
+  height: 500px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-text {
+  font-size: 70px;
+  margin: 10px 0;
+  color: black;
+}
+
+.result-text .highlight {
+  color: #e53935;
+  font-weight: bold;
+  font-size: 80px;
+}
