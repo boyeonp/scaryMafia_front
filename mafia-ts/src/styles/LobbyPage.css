@@ -1,6 +1,8 @@
 .lobby-container{  
     display: flex;
     background-image: url("../assets/night.png");
+    background-size: cover;
+    background-position: center;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -20,7 +22,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   justify-content: center;
-  width: 800px;
+  width: 900px;
   margin: 0 auto 40px auto;
   max-height: 400px;        /* ✅ 최대 높이 설정 */
   overflow-y: auto;         /* ✅ 세로 스크롤 가능하게 */

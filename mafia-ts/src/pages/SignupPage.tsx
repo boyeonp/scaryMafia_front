@@ -2,19 +2,82 @@ import React from "react";
 import "../styles/SignupPage.css";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios"; // API 호출을 위한 axios 인스턴스   
+import { error } from "console";
 
 const SignupPage: React.FC = () => {
     const [userEmail, setUserEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [nickname, setNickname] = React.useState("");
+    const [errorMessage,setErrorMessage] = React.useState("");
+
     const navigate = useNavigate();
+
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    const validatePassword = (pw: string) => {
+        return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(pw);
+    };
+
+    const validateNickname = (name: string) => {
+        return name.length <= 8;
+    };
+    
+    // // 중복 확인 (이메일, 닉네임)
+    // const checkEmailDuplicate = async (email: string) => {
+    //     try {
+    //         const response = await api.post("/auth/check-email", { userEmail: email });
+    //         return response.data.available; // true = 사용 가능
+    //     } catch {
+    //         return false;
+    //     }
+    // };
+
+    // const checkNicknameDuplicate = async (nickname: string) => {
+    //     try {
+    //         const response = await api.post("/auth/check-nickname", { nickname });
+    //         return response.data.available; // true = 사용 가능
+    //     } catch {
+    //         return false;
+    //     }
+    // };
 
     const handleSubmit = async(event: React.FormEvent) => {
         event.preventDefault(); // 폼 제출 이벤트 방지
+        setErrorMessage("");
+
         if (!userEmail || !password || !nickname) {
             alert("모든 항목을 입력해주세요.");
             return;
         }
+        if (!validateEmail(userEmail)) {
+            setErrorMessage("이메일 형식을 확인해주세요.");
+            return;
+        }
+        if (!validatePassword(password)) {
+            setErrorMessage("비밀번호는 영문+숫자 조합 8자 이상이어야 합니다.");
+            return;
+        }
+        if (!validateNickname(nickname)) {
+            setErrorMessage("닉네임은 최대 8글자까지만 가능합니다.");
+            return;
+        }
+
+        // // 중복 확인
+        // const isEmailOk = await checkEmailDuplicate(userEmail);
+        // const isNicknameOk = await checkNicknameDuplicate(nickname);
+
+        // if (!isEmailOk) {
+        //     setErrorMessage("이미 사용 중인 이메일입니다.");
+        //     return;
+        // }
+        // if (!isNicknameOk) {
+        //     setErrorMessage("이미 사용 중인 닉네임입니다.");
+        //     return;
+        // }
+
+        // 회원 가입 요청 
         try {
             const response = await api.post("/auth/signup", {
                 userEmail,
@@ -49,7 +112,11 @@ const SignupPage: React.FC = () => {
                     <text className="signup-input-title">닉네임</text>
                     <input onChange={(event) => setNickname(event.target.value)} value={nickname} className="input-box" type="text" placeholder="닉네임을 입력하세요" required />
                 </div>
-            </div>    
+            </div>
+
+            {/*오류 메시지 출력 */}
+            {errorMessage && <div className="error-message">{errorMessage}</div>}    
+
             <button type="submit" className="submit-btn">완료</button>
             </form>
         </div>

@@ -1,6 +1,8 @@
 import React from "react";
 import '../styles/MakeRoom.css';
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios"; 
+
 
 
 const MakeRoom: React.FC = () => {
@@ -10,14 +12,36 @@ const MakeRoom: React.FC = () => {
     const [memberCount, setMemberCount] = React.useState(8);
     const [error, setError] = React.useState("");
 
-    const handleSubmit=(event: React.FormEvent) => {
+    const handleSubmit= async (event: React.FormEvent) => {
         event.preventDefault();
         if (memberCount < 8){
             setError("최소 인원은 8명입니다.");
             return;
         }
-        console.log({roomName, description, memberCount});
-        navigate("/roomwaiting");
+        try {
+            const hostUserId = localStorage.getItem('userId');
+            if (!hostUserId){
+                setError("로그인이 필요합니다.");
+                return;
+            }
+            const res = await api.post("/rooms", {
+                title: roomName,
+                notes: description,
+                requiredPlayers: memberCount,
+                hostUserId: hostUserId
+            });
+            
+            console.log("방 생성 성공", res.data);
+            // 이후 생성된 roomId를 저장하고, /roomwaiting 등으로 이동 
+            navigate("/roomwaiting", {state: {roomId: res.data.roomId}});
+        } catch (err: any){
+            console.error("방 생성 실패", err);
+            if (err.response?.status === 409){
+                setError("이미 방을 만들었거나, 호스팅 중입니다.");
+            } else {
+                setError("방 생성 중 오류가 발생했습니다.");
+            }
+        }
     };
 
     const decreaseCount = () => {
@@ -57,6 +81,7 @@ const MakeRoom: React.FC = () => {
                     {memberCount <8 && <div className="error-text">최소 인원은 8명입니다.</div>}
                 </div>
                 <button type="submit" className="makeroom-submit-btn">완료</button>
+                {error && <div className="error-text">{error}</div>}
             </form>
         </div>
     );

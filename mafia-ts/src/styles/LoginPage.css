@@ -60,3 +60,9 @@
 .submit-btn:hover{
     background-color: #d4b34c;
 }
+.error-message {
+    color: red;
+    margin-top: 20px;
+    font-size:  20px;
+    text-align: center;
+}
