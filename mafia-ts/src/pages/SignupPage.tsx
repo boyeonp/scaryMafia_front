@@ -24,24 +24,26 @@ const SignupPage: React.FC = () => {
         return name.length <= 8;
     };
     
-    // // 중복 확인 (이메일, 닉네임)
-    // const checkEmailDuplicate = async (email: string) => {
-    //     try {
-    //         const response = await api.post("/auth/check-email", { userEmail: email });
-    //         return response.data.available; // true = 사용 가능
-    //     } catch {
-    //         return false;
-    //     }
-    // };
+    // 중복 확인 (이메일, 닉네임)
+    const checkEmailDuplicate = async (email: string) => {
+         try {
+             const response = await api.post("/auth/check-email", { userEmail: email });
+             return response.data.available; // true = 사용 가능
+         } catch (err) {
+            console.error("이메일 중복 확인 실패", err);
+             return false;
+         }
+     };
 
-    // const checkNicknameDuplicate = async (nickname: string) => {
-    //     try {
-    //         const response = await api.post("/auth/check-nickname", { nickname });
-    //         return response.data.available; // true = 사용 가능
-    //     } catch {
-    //         return false;
-    //     }
-    // };
+    const checkNicknameDuplicate = async (nickname: string) => {
+         try {
+             const response = await api.post("/auth/check-nickname", { nickname });
+             return response.data.available; // true = 사용 가능
+         } catch (err) {
+            console.error("닉네임 중복 확인 실패", err);
+             return false;
+         }
+     };
 
     const handleSubmit = async(event: React.FormEvent) => {
         event.preventDefault(); // 폼 제출 이벤트 방지
@@ -63,20 +65,6 @@ const SignupPage: React.FC = () => {
             setErrorMessage("닉네임은 최대 8글자까지만 가능합니다.");
             return;
         }
-
-        // // 중복 확인
-        // const isEmailOk = await checkEmailDuplicate(userEmail);
-        // const isNicknameOk = await checkNicknameDuplicate(nickname);
-
-        // if (!isEmailOk) {
-        //     setErrorMessage("이미 사용 중인 이메일입니다.");
-        //     return;
-        // }
-        // if (!isNicknameOk) {
-        //     setErrorMessage("이미 사용 중인 닉네임입니다.");
-        //     return;
-        // }
-
         // 회원 가입 요청 
         try {
             const response = await api.post("/auth/signup", {
@@ -87,9 +75,12 @@ const SignupPage: React.FC = () => {
             alert("회원가입 성공! 로그인 페이지로 이동합니다.");
             console.log("회원가입 성공:", response.data);
             navigate('/login'); // 회원가입 후 로그인 페이지로 이동
-        } catch (error) {
-            console.error("회원가입 실패:", error);
-            alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+        } catch (error: any) {
+            if (error.response?.status === 409){
+                setErrorMessage("이미 사용 중인 이메일 또는 닉네임입니다.");
+            } else {
+                setErrorMessage("회원가입에 실패했습니다. 다시 시도해주세요");
+            }
         }
     }
 

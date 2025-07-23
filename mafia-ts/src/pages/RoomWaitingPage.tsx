@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import '../styles/RoomWaitingPage.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
-import userEvent from '@testing-library/user-event';
-import { SettingsPhoneTwoTone } from '@mui/icons-material';
+import { useUser } from '../contexts/UserContext';
 
-interface RoomInfo{
+interface RoomInfo {
   title: string;
   requiredPlayers: number;
   hostUser: {
+    userId: string;
     nickname: string;
   };
+  status: string;
 }
 
 type Participant = {
@@ -25,38 +26,81 @@ const RoomWaitingPage: React.FC = () => {
 
   const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [count, setCount] = useState<number | null>(null);
-  const [showCountdown, setShowCountdown] = useState(false);
-  const [showHostModal, setShowHostModal] = useState(false);
   const [host, setHost] = useState<string>("");
+  const { nickname, setNickname, setRoomId } = useUser();
+
+  const handleStartGame = async () => {
+    if (nickname !== host) {
+      alert("호스트만 게임 시작이 가능합니다");
+      return;
+    }
+
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+      console.log("1️⃣ start-game 요청 시도");
+      await api.post(`/rooms/${roomId}/start-game`);
+      console.log("2️⃣ start-game 요청 성공");
+    } catch (err) {
+      console.error("❌ start-game 호출 실패:", err);
+      alert("게임 시작에 실패했습니다.");
+    }
+  };
 
   useEffect(() => {
-    if (!roomId){
+    if (!roomId) {
       alert("유효하지 않은 접근입니다.");
       navigate('/lobby');
       return;
     }
-    
 
-    // 방 정보 조회
-    const fetchRoomInfo = async() => {
+    setRoomId(roomId);
+
+    const fetchData = async () => {
       try {
-        const res = await api.get(`/rooms/${roomId}`);
-        setRoomInfo(res.data);
-        setHost(res.data.hostUser.nickname);
-      } catch(err){
-        console.error("방 정보 조회 실패", err);
-        alert("방 정보를 불러오지 못했습니다.");
+        const roomRes = await api.get(`/rooms/${roomId}`);
+        const roomData = roomRes.data;
+        setRoomInfo(roomData);
+        setHost(roomData.hostUser.nickname);
+        const userNickname = localStorage.getItem("nickname");
+        if (userNickname) {
+          setNickname(userNickname);
+        }
+
+        const participantsRes = await api.get(`/rooms/${roomId}/participants`);
+        const participantUsers: Participant[] = await Promise.all(
+          participantsRes.data.participants.map(async (userId: string) => {
+            const userRes = await api.get(`/users/userId/${userId}`);
+            return {
+              userId,
+              nickname: userRes.data.nickname,
+            };
+          })
+        );
+        setParticipants(participantUsers);
+      } catch (err) {
+        console.error("데이터 조회 실패", err);
       }
     };
 
-    // 참여자 목록 조회 
-    const fetchParticipants = async() => {
+    fetchData();
+  }, [roomId, navigate, setNickname, setRoomId]);
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    const interval = setInterval(async () => {
       try {
-        const res = await api.get(`/rooms/${roomId}/participants`);
-        // user으로 매핑
+        const roomRes = await api.get(`/rooms/${roomId}`);
+        const newRoomInfo = roomRes.data;
+        setRoomInfo(newRoomInfo);
+
+        const participantsRes = await api.get(`/rooms/${roomId}/participants`);
         const users: Participant[] = await Promise.all(
-          res.data.participants.map(async (userId:string) => {
+          participantsRes.data.participants.map(async (userId: string) => {
             const userRes = await api.get(`/users/userId/${userId}`);
             return {
               userId,
@@ -65,65 +109,32 @@ const RoomWaitingPage: React.FC = () => {
           })
         );
         setParticipants(users);
-      } catch (err) {
-        console.error("참여자 목록 조회 실패", err);
+
+        if (newRoomInfo.status === 'in_progress') {
+          const gameState = await api.get(`/game-logic/state/${roomId}`);
+          const userId = localStorage.getItem('userId');
+          const me = gameState.data?.players?.find((p: any) => p.userId === userId);
+
+          if (me && me.role){
+          navigate('/role', { state: { roomId, roles: gameState.data } });
+        } else{
+          console.warn("역할이 아직 할당되지 않음. 대기 ... ");
+        }
       }
-    };
-    
-    fetchRoomInfo();
-    fetchParticipants();
+      } catch (err) {
+        console.error("상태 업데이트 실패", err);
+        if ((err as any).response?.status === 404) {
+          clearInterval(interval);
+          alert("방이 삭제되었습니다.");
+          navigate('/lobby', { replace: true });
+        }
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [roomId, navigate]);
 
-  useEffect(() => {
-    if (count===null) return;
-
-    if (count > 0){
-      const timer = setTimeout(() => {
-        setCount((prev) => (prev ?? 1)-1);
-          }, 1000);
-        return () => clearTimeout(timer);  // cleanup
-      }
-        
-    if (count ===0){
-      setTimeout(() => {
-        navigate('/role');
-        }, 1000);
-      }
-    }, [count]);
-
-
-    //인원 수 자동 체크 
-    useEffect(() => {
-      if (!roomId || !roomInfo) return;
-
-      const interval = setInterval(async () => {
-        try {
-          const res = await api.get(`/rooms/${roomId}/participants`);
-          const users: Participant[] = await Promise.all(
-            res.data.participants.map(async (userId: string) => {
-              const userRes = await api.get(`/users/userId/${userId}`);
-              return {
-                userId,
-                nickname: userRes.data.nickname,
-              };
-            })
-          );
-          setParticipants(users);
-
-          // 조건 충족 시 Introudce 페이지로 자동 이동 
-          if (users.length === roomInfo.requiredPlayers){
-            clearInterval(interval);
-            navigate("/game/introduce", {state: {roomId}});
-          }
-        } catch (err){
-          console.error("자동 시작 체크 실패", err);
-        }
-      }, 2000); //2초마다 인원 수 체크 
-
-      return () => clearInterval(interval);
-    }, [roomId, roomInfo, navigate]);
-    
-    if (!roomInfo) return <div className="waiting-page">로딩 중 ... </div>;
+  if (!roomInfo) return <div className="waiting-page">로딩 중 ... </div>;
 
   return (
     <div className="waiting-page">
@@ -132,74 +143,41 @@ const RoomWaitingPage: React.FC = () => {
         <div className='info-box'>
           <p className="host-line">
             <span className="host-label">host:</span> {host}
-            <span className="host-action" onClick={()=> setShowHostModal(true)}> 호스트 변경하기</span>
           </p>
-
           <div className="participant-section">
             <p className="participant-count">참여인원 {participants.length}/{roomInfo.requiredPlayers}</p>
-            <ul className="participant-list">
+            <div className="participant-grid">
               {participants.map((user, index) => (
-                <li key={index}>• {user.nickname}</li>
+                <div key={index} className="participant-item">• {user.nickname}</div>
               ))}
-            </ul>
+              </div>
           </div>
         </div>
-
-
-        <p className="notice-text">참여인원이 {roomInfo.requiredPlayers}명 되면 게임이 바로 시작됩니다.</p>
-
-        {/* ✅ 시작 버튼 (임시) */}
-        <button className="start-btn" onClick={() => {
-          setShowCountdown(true);
-          setCount(3);
-        }}>시작</button>
-
-        <button className="exit-btn" onClick={() => navigate('/lobby')}>방 나가기</button>
-      </div>
-
-        {/*게임 시작 카운트다운 */}  
-        {showCountdown && (
-            <div className='fullscreen-blur'>
-                <div className="count-text">
-                    게임을 시작합니다
-                    <br />
-                    {count}
-                </div>
-            </div>
-        )}
-
-        {/*호스트 변경 팝업 */}
-        {showHostModal && (
-          <div className='modal-overlay'>
-            <div className='modal'>
-              <p>호스트를 선택하세요</p>
-              <ul className="host-select-list">
-                {participants.map((user,index) => {
-                  return(
-                  <li key={index}>
-                    <button className='host-select-btn' 
-                    onClick={async() => {
-                      try{
-                        await api.put(`/rooms/${roomId}`, {
-                          hostUserId: user.userId,
-                        });
-                        setHost(user.nickname);
-                        setShowHostModal(false);
-                      } catch (err){
-                        console.error("호스트 변경 실패", err);
-                        alert("호스트 변경 중 오류가 발생했습니다.");
-                      }
-                    }}>
-                      {user.nickname}
-                    </button>
-                  </li>
-                  );
-                })}
-              </ul>
-              <button className='modal-cancel-btn' onClick={() => setShowHostModal(false)}>취소</button>
-            </div>
+        <p className="notice-text">호스트가 게임을 시작할 때까지 대기해주세요.</p>
+        <div className="button-group">
+          {nickname === host && (
+          <button className="exit-btn" onClick={handleStartGame}>
+            게임 시작
+          </button>
+          )}
+          <button className="exit-btn"
+            onClick={async () => {
+              try {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                  alert("로그인이 필요합니다.");
+                  return;
+                }
+                await api.post(`/rooms/${roomId}/leave`, { userId });
+                alert("방에서 나갔습니다.");
+                navigate('/lobby');
+              } catch (err) {
+                console.error("방 나가기 실패", err);
+                alert("방 나가기 중 오류가 발생했습니다.");
+              }
+            }}>방 나가기</button>
           </div>
-        )}
+      </div>
     </div>
   );
 };

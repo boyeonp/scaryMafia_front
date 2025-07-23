@@ -74,3 +74,8 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+.waiting-message {
+  font-size: 18px;
+  margin-top: 40px;
+  color: #666;
+}

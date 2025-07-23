@@ -18,26 +18,47 @@ const MakeRoom: React.FC = () => {
             setError("최소 인원은 8명입니다.");
             return;
         }
-        try {
+        const createRoom = () => {
             const hostUserId = localStorage.getItem('userId');
-            if (!hostUserId){
+            if (!hostUserId) {
                 setError("로그인이 필요합니다.");
-                return;
+                return Promise.reject(new Error("로그인이 필요합니다."));
             }
-            const res = await api.post("/rooms", {
+            return api.post("/rooms", {
                 title: roomName,
                 notes: description,
                 requiredPlayers: memberCount,
                 hostUserId: hostUserId
             });
-            
-            console.log("방 생성 성공", res.data);
-            // 이후 생성된 roomId를 저장하고, /roomwaiting 등으로 이동 
-            navigate("/roomwaiting", {state: {roomId: res.data.roomId}});
-        } catch (err: any){
+        };
+
+        try {
+            const res = await createRoom();
+            if (res) {
+                console.log("방 생성 성공", res.data);
+                navigate("/roomwaiting", {state: {roomId: res.data.roomId}});
+            }
+        } catch (err: any) {
             console.error("방 생성 실패", err);
             if (err.response?.status === 409){
-                setError("이미 방을 만들었거나, 호스팅 중입니다.");
+                if (window.confirm("이미 호스팅 중인 방이 있습니다. 기존 방을 삭제하고 새로 만드시겠습니까?")) {
+                    try {
+                        const hostUserId = localStorage.getItem('userId');
+                        // 기존 방 삭제 API 호출 (엔드포인트는 추정)
+                        await api.delete(`/rooms/by-host/${hostUserId}`);
+                        // 방 삭제 후 다시 생성 시도
+                        const res = await createRoom();
+                        if (res) {
+                            console.log("방 생성 성공", res.data);
+                            navigate("/roomwaiting", {state: {roomId: res.data.roomId}});
+                        }
+                    } catch (deleteErr) {
+                        console.error("기존 방 삭제 실패", deleteErr);
+                        setError("기존 방을 삭제하는 데 실패했습니다. 잠시 후 다시 시도해주세요.");
+                    }
+                } else {
+                    setError("이미 방을 만들었거나, 호스팅 중입니다.");
+                }
             } else {
                 setError("방 생성 중 오류가 발생했습니다.");
             }

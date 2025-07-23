@@ -1,27 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/IntroduceChat.css';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
+import { socket } from '../socket';
+
+interface Message {
+    nickname: string;
+    message: string;
+    timestamp?: string;
+}
 
 const IntroduceChat: React.FC = () => {
-    const [messages, setMessages] = useState([
-        { sender: '병주', text: '안녕하세요. 저는 시민입니다.' },
-        { sender: '유진', text: '안녕하세요. 저도 시민입니다.' },
-        { sender: '민지', text: '저도 마피아 하고 싶네요 ..' },
-        { sender: '나', text: '안녕하세요. 저는 마피아에요\n히히히' },       
-    ]);
-
+    const { roomId, nickname } = useUser();
+    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
-    const [remainingTime, setRemainingTime] = useState(10);
+    const [remainingTime, setRemainingTime] = useState(240);
     const [showNightPopup, setShowNightPopup] = useState(false);
     
     const navigate = useNavigate();
 
 
     const handleSend = () => {
-        if (input.trim() === '') return;
-        setMessages([...messages, {sender: '나', text: input}]);
+        console.log('[🟡 handleSend] 호출됨');
+        console.log('    ⤷ input:', input);
+        console.log('    ⤷ roomId:', roomId);
+        console.log('    ⤷ nickname:', nickname);
+
+        if (!input.trim()) {
+            console.log('    ⤷ 입력값 없음. 전송 중단.');
+            return;
+        }
+        socket.emit('chat_message', {
+            roomId,
+            nickname,
+            message: input,
+        });
+
+        console.log('[📤 socket.emit] chat_message 전송:', input);
+
         setInput('');
     };
+
+    useEffect(() => {
+        if (!roomId || !nickname) return;
+
+        socket.connect();
+
+        function onConnect() {
+            console.log('[🔗 useEffect] 소켓 연결 및 이벤트 바인딩');
+            socket.emit('join_room', { roomId, nickname });
+            console.log('[📥 socket.emit] join_room 전송:', { roomId, nickname });
+        }
+
+        function onDisconnect() {
+            console.log('socket disconnected');
+        }
+
+        function onChatHistory(history: Message[]) {
+            console.log('[📜 수신] chat_history:', history);
+            setMessages(history);
+        }
+
+        function onChatMessage(msg: Message) {
+            console.log('[📩 수신] chat_message:', msg);
+            setMessages((prev) => [...prev, msg]);
+        }
+
+        socket.on('connect', onConnect);
+        socket.on('disconnect', onDisconnect);
+        socket.on('chat_history', onChatHistory);
+        socket.on('chat_message', onChatMessage);
+
+        return () => {
+            socket.off('connect', onConnect);
+            socket.off('disconnect', onDisconnect);
+            socket.off('chat_history', onChatHistory);
+            socket.off('chat_message', onChatMessage);
+            socket.disconnect();
+        };
+    }, [roomId, nickname]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -56,10 +113,12 @@ const IntroduceChat: React.FC = () => {
                     {messages.map((msg, idx) => (
                     <div
                         key={idx}
-                        className={`chat-message ${msg.sender === '나' ? 'mine' : 'theirs'}`}
+                        className={`chat-message ${msg.nickname === nickname ? 'mine': 'theirs'}`}
                     >
-                        {msg.sender ! == '나' && <div className="sender-name">{msg.sender}</div>}
-                        <div className="message-bubble">{msg.text}</div>
+                        {msg.nickname !== nickname && (
+                            <div className = "sender-name">{msg.nickname}</div>
+                        )}
+                        <div className="message-bubble">{msg.message}</div>
                     </div>
                     ))}
                 </div>

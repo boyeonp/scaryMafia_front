@@ -16,7 +16,6 @@ const LobbyPage =  () => {
     const [rooms, setRooms] = useState<RoomWithCount[]>([]);
     const navigate = useNavigate();
 
-    useEffect(() => {
     const fetchRoomsWithParticipantCount = async () => {
         try {
         const res = await api.get('/rooms/waiting');
@@ -48,7 +47,15 @@ const LobbyPage =  () => {
         }
     };
 
-    fetchRoomsWithParticipantCount();
+    useEffect(()=> {
+
+        fetchRoomsWithParticipantCount();
+
+        const interval = setInterval(() => {
+            fetchRoomsWithParticipantCount();
+        }, 2000);
+        
+        return () => clearInterval(interval);
     }, []);
 
     return (

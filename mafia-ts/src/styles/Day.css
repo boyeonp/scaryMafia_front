@@ -25,3 +25,11 @@
 .highlight-bold {
   font-weight: bold;
 }
+.top-right-timer {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}

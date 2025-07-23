@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="login-form">
                 <p className="login-title"> 로그인 </p>
                 <div className="input-container">
-                    <span className="login-input-title">아이디</span>
+                    <span className="login-input-title">이메일</span>
                     <input onChange={(event) => setUserEmail(event.target.value)} value={userEmail} type="text" className="input-box" placeholder=" 아이디를 입력하세요" />
                 </div>
                 <div className="input-container">
